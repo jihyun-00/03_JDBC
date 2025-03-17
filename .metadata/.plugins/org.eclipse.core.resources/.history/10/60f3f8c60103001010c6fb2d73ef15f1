@@ -1,0 +1,23 @@
+package edu.kh.jdbc;
+
+public class JDBCExample5 {
+
+	public static void main(String[] args) {
+
+		/* 
+		 * java.sql.PreparedStatment
+		 * - SQL 중간에? (위치홀더, placeholder)를 작성하여
+		 * ? 자리에 java 값을 대입할 준비가 되어있는 Statement
+		 * 
+		 * 장점 1 : SQL 작성이 간단해짐
+		 * 장점 2 : ? 에 값 대입 시 자료형에 맞는 형태의 리터럴로 대입됨!
+		 * 			ex) String 대입 -> '값' (자동으로 ''추가)
+		 * 			ex) int 대입    -> 값
+		 * 
+		 *  
+		 *  
+		 *  
+		 *  */
+	}
+
+}

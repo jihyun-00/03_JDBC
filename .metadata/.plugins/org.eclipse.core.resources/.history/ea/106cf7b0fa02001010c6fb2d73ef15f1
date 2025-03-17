@@ -1,0 +1,55 @@
+package edu.kh.jdbc;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class JDBCExample4 {
+
+	public static void main(String[] args) {
+
+		// 부서명을 입력받아
+		// 해당 부서에 근무하는 사원의
+		// 사번, 이름, 부서명, 직급명을
+		// 직급코드 오름차순으로 조회
+		
+		// [실행화면]
+		// 부서명 입력 : 총무부
+		// 200 / 선동일 / 총무부 / 대표
+		// 201 / 노옹철 / 총무부 / 부사장
+		// 202 / 송종기 / 총무부 / 부사장
+		
+		// 부서명 입력 : 개발팀
+		// 일치하는 부서가 없습니다!
+		
+		// hint : SQL에서 문자열은 양쪽 ''(홑따옴표) 필요
+		// ex) 총무부 입력 -> '총무부'
+		
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		
+		Scanner sc = null;
+		
+		try {
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs!= null) rs.close();
+				if(stmt!= null) stmt.close();
+				if(conn!= null) conn.close();
+				
+				sc.close();
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	}
+
+}
