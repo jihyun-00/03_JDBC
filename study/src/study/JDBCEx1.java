@@ -58,7 +58,7 @@ public class JDBCEx1 {
 			
 			rs = ps.executeQuery();
 			
-			if(!rs.isBeforeFirst()) {//비어있다면
+			if(!rs.isBeforeFirst()) { //비어있다면
 				
 				System.out.println("실패!");
 				return;
