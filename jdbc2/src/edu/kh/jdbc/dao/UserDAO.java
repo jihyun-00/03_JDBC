@@ -5,10 +5,14 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 // import static : 지정된 경로에 존재하는 static 구문을 모두 얻어와
 // 클래스명.메서드명()이 아닌 메서드명()만 작성해도 호출 가능하게 함.
 import static edu.kh.jdbc.common.JDBCTemplate.*;
+
+import edu.kh.jdbc.common.JDBCTemplate;
 import edu.kh.jdbc.dto.User;
 
 // (Model 중 하나)DAO (Data Access Object) -> 데이터 접근 객체
@@ -84,67 +88,91 @@ public class UserDAO {
 			// Connection 객체는 생성된 Service에서 close!
 			
 		}
-		
+
 		return user; // 결과 반환 (생성된 User 객체 또는 null)
 	}
-	
-	public User selectAll() {
+
+	public int insertUser(Connection conn, User user) {
 		
-		// 1. 결과 저장용 변수 선언
-				User user = null;
-				
-				try {
-					
-					// 2. SQL 작성
-					String sql = "SELECT * FROM TB_USER WHERE USER_ID = ?";
-					
-					// 3. PreparedStatement 객체 생성
-					pstmt = conn.prepareStatement(sql);
-					
-					// 4. ? (위치홀더) 에 알맞은 값 세팅
-					pstmt.setString(1, input);
-					
-					// 5. SQL 수행 후 결과 반환 받기
-					rs = pstmt.executeQuery();
-					
-					// 6. 조회결과가 있을 경우
-					// + 중복되는 아이디가 없다고 가정
-					// -> 1행만 조회되기 때문에 while문보다는 if를 사용하는 게 효과적
-					if(rs.next()) {
-						// 첫 행의 데이터가 존재한다면
-						
-						// 각 컬럼의 값 얻어오기
-						int userNo = rs.getInt("USER_NO");
-						String userId = rs.getString("USER_ID");
-						String userPw = rs.getString("USER_PW");
-						String userName = rs.getString("USER_NAME");
-						
-						Date enrollDate = rs.getDate("ENROLL_DATE");
-						
-						// 조회된 컬럼값을 이용해서 User 객체 생성
-						user = new User(userNo, userId, userPw, userName,
-								enrollDate.toString() );
-						
-					}
-					
-					
-				}catch(Exception e) {
-					e.printStackTrace();
-					
-				}finally {
-					// 사용한 JDBC 객체 자원 반환(close)
-					// JDBCTemplate.close(rs);
-					// JDBCTemplate.close(pstmt);
-					
-					close(rs);
-					close(pstmt);
-					
-					// Connection 객체는 생성된 Service에서 close!
-					
-				}
-				
-				return user; // 결과 반환 (생성된 User 객체 또는 null)
-			}
 		
+		/*
+		 * INSERT INTO TB_USER 
+		 * VALUES(SEQ_USER_NO.NEXTVAL, 'user01', 'pass01', '유저일', DEFAULT );
+		 */
+		
+		//1. 결과 저장용 변수 선언
+		int result = 0;
+		
+		try {
+			// 2. SQL 작성
+			String sql = """
+					INSERT INTO TB_USER 
+					VALUES(SEQ_USER_NO.NEXTVAL, ?, ?, ?, DEFAULT )
+					""";
+			
+			// 4. ? (위치홀더) 에 알맞은 값 세팅
+			pstmt.setString(1, user.getUserId());
+			pstmt.setString(2, user.getUserPw());
+			pstmt.setString(3, user.getUserName());
+			// 3. PreparedStatement 객체 생성
+			pstmt = conn.prepareStatement(sql);
+			
+			// 5. SQL 수행 후 결과 반환 받기
+			result = pstmt.executeUpdate();
+			
+			
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+			
+		} finally {
+			close(pstmt);
+			
+		}
+		return result;
+
 	}
+
+	public List<User> selectAll(Connection conn) {
+		
+		List<User> userList = new ArrayList<User>();
+		
+		try {
+			
+			String sql = """
+					SELECT * FROM TB_USER
+					""";
+			
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			
+			boolean flag = true;
+			
+			while(rs.next()) {
+				flag = false;
+				
+				userList.add(new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5)));
+			}
+			
+			if(flag) {
+				System.out.println("조회값 없음");
+			}
+			
+			//return userList;
+			
+		} catch(Exception e) {
+			
+			e.printStackTrace();
+		}finally {
+			close(rs);
+			close(pstmt);
+			
+		}
+			
+			return userList;
+			
+			
+		}
+			
+		
 }

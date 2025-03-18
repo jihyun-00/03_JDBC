@@ -1,6 +1,7 @@
 package edu.kh.jdbc.service;
 
 import java.sql.Connection;
+import java.util.List;
 
 import edu.kh.jdbc.common.JDBCTemplate;
 import edu.kh.jdbc.dao.UserDAO;
@@ -41,23 +42,30 @@ public class UserService {
 		
 	}
 	
-	public User selectAll() {
+	public int insertUser(User user) {
+		
+		int result =0;
+		
+		Connection conn = JDBCTemplate.getConnection();
+		
+		result = dao.insertUser(conn, user);
+				
+		JDBCTemplate.close(conn);
+		
+		return result;
+	}
+	
+	
+	public List<User> selectAll() {
 		
 		// 1. 커넥션 생성
 		Connection conn = JDBCTemplate.getConnection();
 		
-		// 2. 데이터 가공(할게 없으면 넘어감)
-		
-		// 3. DAO 메서드 호출 결과 반환
-		User user = dao.selectAll(conn);
-		
-		// 4. DML(commit/rollback)
-		
-		// 5. 다쓴 커넥션 자원 반환
+		List<User> userList = dao.selectAll(conn);
 		JDBCTemplate.close(conn);
 		
-		// 6. 결과를 view 리턴
-		return user;
+		return userList;
 		
 	}
+
 }

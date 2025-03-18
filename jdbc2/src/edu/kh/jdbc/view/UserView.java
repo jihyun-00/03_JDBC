@@ -1,7 +1,11 @@
 package edu.kh.jdbc.view;
 
+import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
+import edu.kh.jdbc.common.JDBCTemplate;
 import edu.kh.jdbc.dto.User;
 import edu.kh.jdbc.service.UserService;
 
@@ -12,6 +16,7 @@ public class UserView {
 	// 필드
 	private Scanner sc = new Scanner(System.in);
 	private UserService service = new UserService();
+	private int ArrayList;
 	
 	
 	// 메서드
@@ -60,14 +65,14 @@ public class UserView {
 				sc.nextLine(); // 버퍼에 남은 개행문자 제거
 				
 				switch(input) {
-				case 1: insertUser(); break;
+				//case 1: insertUser(); break;
 				case 2: selectAll(); break;
-				case 3: selectName(); break;
-				case 4: selectUser(); break;
-				case 5: deleteUser(); break;
-				case 6: updateName(); break;
-				case 7: insertUser2(); break;
-				case 8: multiInsertUser(); break;
+				//case 3: selectName(); break;
+				//case 4: selectUser(); break;
+				//case 5: deleteUser(); break;
+				//case 6: updateName(); break;
+				//case 7: insertUser2(); break;
+				//case 8: multiInsertUser(); break;
 				
 				case 0 : System.out.println("\n[프로그램 종료]\n"); break;
 				default: System.out.println("\n[메뉴 번호만 입력하세요]\n");
@@ -90,5 +95,51 @@ public class UserView {
 		}while(input != 0);
 		
 	} // mainMenu() 종료
+	
+	private void inserUser() {
+		
+		
+		int result = 0;
+		
+		System.out.print("추가할 아이디 : ");
+		String id = sc.next();
+		
+		System.out.print("추가할 비밀번호 : ");
+		String pw = sc.next();
+		
+		System.out.print("추가할 이름 : ");
+		String name = sc.next();
+		
+		
+		result = service.insertUser(user);
+		
+		if(result>0) {
+			System.out.println("성공!");
+			JDBCTemplate.commit(conn);
+		} else {
+			System.out.println("실퓨");
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+	}
+	
+	private void selectAll() {
+		
+		List<User> userList = service.selectAll();
+		
+		for(User u : userList) {
+			System.out.println(u);
+		}
+		
+		
+	}
+	
+	
 
 }
