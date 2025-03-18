@@ -49,6 +49,12 @@ public class UserService {
 		Connection conn = JDBCTemplate.getConnection();
 		
 		result = dao.insertUser(conn, user);
+		
+		if(result>0) {
+			JDBCTemplate.commit(conn);
+		} else {
+			JDBCTemplate.rollback(conn);
+		}
 				
 		JDBCTemplate.close(conn);
 		
@@ -66,6 +72,114 @@ public class UserService {
 		
 		return userList;
 		
+	}
+
+	public List<User> selectName(String search) {
+		
+		Connection conn = null;
+		
+		List<User> userList = dao.selectName(conn, search);
+		
+		JDBCTemplate.close(conn);
+		
+		return userList;
+	}
+
+	public User selectUser(int userNo) {
+		
+		Connection conn = JDBCTemplate.getConnection();
+		
+		User user = dao.selectUser(conn, userNo);
+		
+		JDBCTemplate.close(conn);
+		
+		
+		return user;
+	}
+
+	public int deleteUser(int userNo) {
+		
+		Connection conn = JDBCTemplate.getConnection();
+		
+		int result = 0;
+		
+		result = dao.deleteUser(conn, userNo);
+		
+		if(result>0) {
+			JDBCTemplate.commit(conn);
+		} else {
+			JDBCTemplate.rollback(conn);
+		}
+		
+		JDBCTemplate.close(conn);
+		
+		return result;
+		
+		
+		
+	}
+
+	public int updateName(String id, String pw, String name) {
+		
+		int result = 0;
+		
+		Connection conn = JDBCTemplate.getConnection();
+		
+		
+		result = dao.updateName(conn, id, pw, name);
+		
+		
+		if(result>0) {
+			JDBCTemplate.commit(conn);
+		} else {
+			JDBCTemplate.rollback(conn);
+		}
+		
+		JDBCTemplate.close(conn);
+		
+		return result;
+	}
+
+	public int insertUser2(String id, String pw, String name) {
+		
+		int result = 0;
+		
+		Connection conn = JDBCTemplate.getConnection();
+		
+		// 2. 가공 데이터
+		
+		result = dao.insertUser2(conn, id, pw, name);
+		
+		if(result>0) {
+			JDBCTemplate.commit(conn);
+		} else {
+			JDBCTemplate.rollback(conn);
+		}
+		
+		JDBCTemplate.close(conn);
+		
+		return result;
+	}
+
+	public int multiInsertUser(User user) {
+		
+		int result = 0;
+		
+		Connection conn = JDBCTemplate.getConnection();
+		
+		result = dao.multiInsertUser(conn, user);
+		
+		JDBCTemplate.close(conn);
+		
+		if(result>0) {
+			JDBCTemplate.commit(conn);
+		} else {
+			JDBCTemplate.rollback(conn);
+		}
+		
+		JDBCTemplate.close(conn);
+		
+		return result;
 	}
 
 }

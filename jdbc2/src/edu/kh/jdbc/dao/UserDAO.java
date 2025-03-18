@@ -173,6 +173,183 @@ public class UserDAO {
 			
 			
 		}
+
+	public List<User> selectName(Connection conn, String search) {
+		
+		List<User> userList = new ArrayList<User>();
+		
+		try {
+			
+			String sql = """
+					SELECT * FROM TB_USER WHERE USER_NAME = """ + "'%" + search + "%'";
+			
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			
+			boolean flag = true;
+			
+			while(rs.next()) {
+				flag = false;
+				userList.add(new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5)));
+			}
+			
+			if(flag) {
+				System.out.println("일치하는 값이 없습니다.");
+			}
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			close(rs);
+			close(pstmt);
+			
+		}
+		return userList;
+		
+		
+		return userList;
+	}
+
+	public User selectUser(Connection conn, int userNo) {
+		
+		User user = null;
+		
+		try {
+			String sql = """
+				SELECT * FROM TB_USER WHERE USER_NO = 
+				""" + userNo;
+			
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				
+			user = new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5))
+			}
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			close(rs);
+			close(pstmt);
+		}
+		
+
+		return user;
+	}
+
+	public int deleteUser(Connection conn, int userNo) {
+		
+		int result = 0;
+		
+		try {
+			String sql = """
+				DELETE FROM TB_USER
+				WHERE USER_NO = 
+				""" + userNo;
+			
+			pstmt = conn.prepareStatement(sql);
+			
+			result = pstmt.executeUpdate();
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			close(pstmt);
+		}
+		
+		
+		
+		return result;
+	}
+
+	public int updateName(Connection conn, String id, String pw, String name) {
+		
+		int result = 0;
+		
+		try {
+			
+			String sql = """
+					UPDATE TB_TABLE
+					SET USER_NAME = ?
+					WHERE USER_ID = ?
+					AND USER_PW = ?
+					""";
+			
+			pstmt.setString(1, name);
+			pstmt.setString(2, id);
+			pstmt.setString(3, pw);
+			
+			pstmt = conn.prepareStatement(sql);
+			result = pstmt.executeUpdate();
+			
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			close(pstmt);
+		}
+		
+		return result;
+	}
+
+	public int insertUser2(Connection conn, String id, String pw, String name) {
+		
+		int result = 0;
+		
+		try {
+			
+			String sql = """
+					INSERT INTO TB_USER
+					VALUES(SEQ_USER_NO.NEXTVAL, ?, ?, ?, DEFAULT)
+					WHERE ? != USER_ID
+					""";
+			pstmt.setString(1, id);
+			pstmt.setString(2, pw);
+			pstmt.setString(3, name);
+			pstmt.setString(4, id);
+			
+			pstmt = conn.prepareStatement(sql);
+			result = pstmt.executeUpdate();
+			
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			close(pstmt);
+		}
+		
+		return result;
+	}
+
+	public int multiInsertUser(Connection conn, User user) {
+		
+		int result = 0;
+		
+		try {
+			
+			String sql = """
+					INSERT INTO TB_USER
+					VALUES(SEQ_USER_NO.NEXTVAL, ?, ?, ?, DEFAULT)
+					""";
+			
+			pstmt.setString(1, user.getId());
+			pstmt.setString(2, user.getPw());
+			pstmt.setString(3, user.getName());
+			
+			pstmt = conn.prepareStatement(sql);
+			result = pstmt.executeUpdate();
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+
+		} finally {
+			close(pstmt);
+		}
+		
+		
+		return result;
+	}
 			
 		
 }
