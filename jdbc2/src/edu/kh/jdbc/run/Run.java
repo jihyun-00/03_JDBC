@@ -9,7 +9,7 @@ public class Run {
 		UserView view = new UserView();
 		//view.test();
 		view.mainMenu();
-		// 주석
+		// git 실험
 
 	}
 
