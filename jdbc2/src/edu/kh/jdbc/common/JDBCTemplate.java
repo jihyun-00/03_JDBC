@@ -79,7 +79,7 @@ public class JDBCTemplate {
 	/** 전달받은 커넥션에서 수행한 SQL을 Commit 하는 메서드
 	 * @param conn
 	 */
-	public void commit(Connection conn) {
+	public static void commit(Connection conn) {
 		
 		
 		try {

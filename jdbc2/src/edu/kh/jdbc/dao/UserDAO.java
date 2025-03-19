@@ -92,8 +92,16 @@ public class UserDAO {
 		return user; // 결과 반환 (생성된 User 객체 또는 null)
 	}
 
-	public int insertUser(Connection conn, User user) {
+	/** 1. User 등록 DAO
+	 * @param conn : DB 연결 정보가 담겨있는 Connection 객체
+	 * @param user : 입력받은 id, pw, name이 세팅된 User 객체
+	 * @return : INSERT 결과 행의 개수
+	 */
+	public int insertUser(Connection conn, User user) throws Exception{
 		
+		// SQL 수행 중 발생하는 예외를
+		// catch로 처리하지 않고, throws를 이용해서 호출부로 던져 처리
+		// -> catch 문 필요없다!
 		
 		/*
 		 * INSERT INTO TB_USER 
@@ -109,23 +117,24 @@ public class UserDAO {
 					INSERT INTO TB_USER 
 					VALUES(SEQ_USER_NO.NEXTVAL, ?, ?, ?, DEFAULT )
 					""";
+
+			// 3. PreparedStatement 객체 생성
+			pstmt = conn.prepareStatement(sql);
 			
 			// 4. ? (위치홀더) 에 알맞은 값 세팅
 			pstmt.setString(1, user.getUserId());
 			pstmt.setString(2, user.getUserPw());
 			pstmt.setString(3, user.getUserName());
-			// 3. PreparedStatement 객체 생성
-			pstmt = conn.prepareStatement(sql);
 			
 			// 5. SQL 수행 후 결과 반환 받기
 			result = pstmt.executeUpdate();
 			
 			
 			
-		} catch(Exception e) {
+		} /*catch(Exception e) {
 			e.printStackTrace();
 			
-		} finally {
+		} */finally {
 			close(pstmt);
 			
 		}
@@ -140,7 +149,10 @@ public class UserDAO {
 		try {
 			
 			String sql = """
-					SELECT * FROM TB_USER
+					SELECT USER_NO, USER_ID, USER_PW, USER_NAME, 
+					TO_CHAR(ENROLL_DATE, 'YYYY"년" MM"월" DD"일"') ENROLL_DATE
+					FROM TB_USER
+					ORDER BY 1
 					""";
 			
 			pstmt = conn.prepareStatement(sql);
@@ -152,6 +164,8 @@ public class UserDAO {
 				flag = false;
 				
 				userList.add(new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5)));
+				// java.sql.Date 타입으로 값을 저장하지 않은 이유
+				// -> SELECT 문에서 TO_CHAR()를 이용하여 문자열로 변환해 조회했기 때문에
 			}
 			
 			if(flag) {
@@ -181,8 +195,8 @@ public class UserDAO {
 		try {
 			
 			String sql = """
-					SELECT * FROM TB_USER WHERE USER_NAME = """ + "'%" + search + "%'";
-			
+					SELECT * FROM TB_USER WHERE USER_NAME LIKE """ + "'%" + search + "%'";
+			 		// SELECT * FROM TB_USER WHERE USER_NAME LIKE '%' || ? || '%'; ->db에서는 이렇게 작성
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 			
@@ -206,10 +220,13 @@ public class UserDAO {
 		}
 		return userList;
 		
-		
-		return userList;
 	}
 
+	/** 4. USER_NO를 입력 받아 일치하는 User 조회 dao
+	 * @param conn
+	 * @param userNo
+	 * @return user 객체 or null
+	 */
 	public User selectUser(Connection conn, int userNo) {
 		
 		User user = null;
@@ -224,7 +241,7 @@ public class UserDAO {
 			
 			if(rs.next()) {
 				
-			user = new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5))
+			user = new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5));
 			}
 			
 		} catch(Exception e) {
@@ -238,6 +255,11 @@ public class UserDAO {
 		return user;
 	}
 
+	/** USER_NO를 입력바아 일치하는 User 삭제 dao
+	 * @param conn
+	 * @param userNo
+	 * @return
+	 */
 	public int deleteUser(Connection conn, int userNo) {
 		
 		int result = 0;
@@ -263,24 +285,29 @@ public class UserDAO {
 		return result;
 	}
 
-	public int updateName(Connection conn, String id, String pw, String name) {
+	/**일치하는 회원의 이름 수정 DAO
+	 * @param conn
+	 * @param id
+	 * @param pw
+	 * @param name
+	 * @return result
+	 */
+	public int updateName(Connection conn, String name, int userNo) {
 		
 		int result = 0;
 		
 		try {
 			
 			String sql = """
-					UPDATE TB_TABLE
+					UPDATE TB_USER
 					SET USER_NAME = ?
-					WHERE USER_ID = ?
-					AND USER_PW = ?
+					WHERE USER_NO = ?
 					""";
+			pstmt = conn.prepareStatement(sql);
 			
 			pstmt.setString(1, name);
-			pstmt.setString(2, id);
-			pstmt.setString(3, pw);
+			pstmt.setInt(2, userNo);
 			
-			pstmt = conn.prepareStatement(sql);
 			result = pstmt.executeUpdate();
 			
 			
@@ -299,19 +326,30 @@ public class UserDAO {
 		
 		try {
 			
-			String sql = """
-					INSERT INTO TB_USER
-					VALUES(SEQ_USER_NO.NEXTVAL, ?, ?, ?, DEFAULT)
-					WHERE ? != USER_ID
-					""";
-			pstmt.setString(1, id);
-			pstmt.setString(2, pw);
-			pstmt.setString(3, name);
-			pstmt.setString(4, id);
 			
-			pstmt = conn.prepareStatement(sql);
-			result = pstmt.executeUpdate();
+			String testsql = """
+					SELECT USER_ID
+					FROM TB_USER
+					WHERE USER_ID = """ + "'" + id + "'";
 			
+			stmt = conn.createStatement();
+			
+			rs = stmt.executeQuery(testsql);
+			
+			if (!rs.next()) {
+
+				String sql = """
+						INSERT INTO TB_USER
+						VALUES(SEQ_USER_NO.NEXTVAL, ?, ?, ?, DEFAULT)
+						""";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, id);
+				pstmt.setString(2, pw);
+				pstmt.setString(3, name);
+
+				result = pstmt.executeUpdate();
+
+			}
 			
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -322,34 +360,84 @@ public class UserDAO {
 		return result;
 	}
 
-	public int multiInsertUser(Connection conn, User user) {
+	/**
+	 * @param conn
+	 * @param id
+	 * @param pw
+	 * @return
+	 */
+	public int selectUserNo(Connection conn, String id, String pw) {
 		
-		int result = 0;
+		int userNo = 0;
+		
+		try {
+			String sql = """
+					SELECT USER_NO
+					FROM TB_USER
+					WHERE USER_ID =?
+					AND USER_PW = ? 
+					""";
+			
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, id);
+			pstmt.setString(2, pw);
+			
+			rs = pstmt.executeQuery();
+			
+			// 조회된 1행이 있을 경우
+			if(rs.next()) {
+				userNo = rs.getInt("USER_NO");
+			}
+			
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			close(rs);
+			close(pstmt);
+		}
+		return userNo;
+	}
+
+	/** 아이디 중복 확인 dao
+	 * @param conn
+	 * @param userId
+	 * @return
+	 */
+	public int idCheck(Connection conn, String userId) throws Exception {
+		
+		int count = 0;
 		
 		try {
 			
 			String sql = """
-					INSERT INTO TB_USER
-					VALUES(SEQ_USER_NO.NEXTVAL, ?, ?, ?, DEFAULT)
+					SELECT COUNT(*)
+					FROM TB_USER
+					WHERE USER_ID = ?
 					""";
 			
-			pstmt.setString(1, user.getId());
-			pstmt.setString(2, user.getPw());
-			pstmt.setString(3, user.getName());
-			
 			pstmt = conn.prepareStatement(sql);
-			result = pstmt.executeUpdate();
 			
-		} catch(Exception e) {
-			e.printStackTrace();
-
-		} finally {
+			pstmt.setString(1, userId);
+			
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				count = rs.getInt(1);
+			}
+			
+			
+		}finally {
+			close(rs);
 			close(pstmt);
 		}
 		
 		
-		return result;
+		
+		return count;
 	}
-			
+
+	
 		
 }
