@@ -20,6 +20,8 @@ public class CreateXMLFile {
 		
 		prop.storeToXML(fos, file + ".xml 파일 생성 완료!");
 		
+		System.out.println(file + ".xml 생성 완료");
+		
 		
 		} catch(Exception e) {
 			e.printStackTrace();

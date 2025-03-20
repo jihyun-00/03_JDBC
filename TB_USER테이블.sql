@@ -13,6 +13,24 @@ COMMENT ON COLUMN TB_USER.USER_NAME   IS '사용자 이름';
 COMMENT ON COLUMN TB_USER.ENROLL_DATE IS '사용자 가입일';
 
 
+/* 
+ * 인덱스명 : IDX_EMP_NAME
+ * 테이블명 : EMPLOYEE
+ * 컬럼명 : EMP_NAME
+ * 목적 : EMP_NAME 이용한 컬럼 검색 속도 향상
+ * 
+ *  */
+
+-- EMPLOYEE 테이블의 EMAIL 컬럼에 UNIQUE INDEX 생성
+CREATE UNIQUE INDEX IDX_UNIQUE_EMAIL
+ON EMPLOYEE (EMAIL);
+
+-- UNIQUE INDEX는 중복 방지
+-- ENAIL 컬럼에 중복되지 않는 고유한 값만 허용
+--> 중복된 EMAIL 삽입 시 오류 발생!
+
+
+
 -- USER_NO 컬럼에 삽입될 시퀀스 생성
 CREATE SEQUENCE SEQ_USER_NO NOCACHE;
 
@@ -23,7 +41,7 @@ INSERT INTO TB_USER
 VALUES(SEQ_USER_NO.NEXTVAL, 'user02', 'pass02', '유저이', DEFAULT );
 
 SELECT * FROM TB_USER
-ORDER BY 5;
+ORDER BY 1;
 
 
 

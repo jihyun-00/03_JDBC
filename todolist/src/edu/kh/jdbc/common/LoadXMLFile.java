@@ -20,7 +20,7 @@ public class LoadXMLFile {
 			String driver = prop.getProperty("driver");
 			String url = prop.getProperty("url");
 			String userName = prop.getProperty("userName");
-			String password = prop.getProperty("passWord");
+			String password = prop.getProperty("password");
 			
 			Class.forName(driver);
 			Connection conn = DriverManager.getConnection(url, userName, password);
