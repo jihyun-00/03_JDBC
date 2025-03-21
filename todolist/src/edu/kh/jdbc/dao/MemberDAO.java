@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 import edu.kh.jdbc.common.JDBCTemplate;
+import edu.kh.jdbc.dto.Member;
 
 public class MemberDAO {
 	
@@ -39,6 +40,29 @@ public class MemberDAO {
 		}
 		return result;
 	}
+
+	public Member logIn(Connection conn, Member member) {
+		
+		JDBCTemplate.getConnection();
+		
+		String sql = """
+				SELECT MEMBER_ID, MEMBER_PW
+				FROM TB_MEMBER
+				WHERE MEMBER_ID = ?
+				AND MEMBER_PW = ?
+				""";
+		
+		pstmt = conn.prepareStatement(sql);
+		
+		pstmt.setString(1, member.getUserId());
+
+		return null;
+	}
+
+	
+
+
+	
 
 	
 

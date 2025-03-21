@@ -1,8 +1,10 @@
 package edu.kh.jdbc.service;
 
 import java.sql.Connection;
+import java.util.List;
 
 import edu.kh.jdbc.dao.MemberDAO;
+import edu.kh.jdbc.dto.Member;
 
 public class MemberService {
 	
@@ -16,5 +18,21 @@ public class MemberService {
 		
 		return result;
 	}
+
+	public Member logIn(Member member) {
+		
+		Connection conn = null;
+		
+		member = dao.logIn(conn,member);
+		
+		return member;
+		
+	}
+
+	
+
+	
+
+	
 
 }

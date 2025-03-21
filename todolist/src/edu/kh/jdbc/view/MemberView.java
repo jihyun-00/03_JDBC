@@ -1,7 +1,10 @@
 package edu.kh.jdbc.view;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
+import edu.kh.jdbc.dto.Member;
 import edu.kh.jdbc.service.MemberService;
 
 public class MemberView {
@@ -28,9 +31,8 @@ public class MemberView {
 				int num = sc.nextInt();
 
 				switch (num) {
-				case 1:
-					signIn(); break;
-				case 2:
+				case 1: signIn(); break;
+				case 2: logIn(); break;
 				case 3:
 				case 4:
 				case 5:
@@ -81,4 +83,21 @@ public class MemberView {
 		
 	}
 
+	private void logIn() throws Exception{
+		
+		//List<Member> memberList = new ArrayList<>();
+		
+		System.out.println("\n===== 로그인 =====");
+		System.out.print("아이디 : ");
+		String id = sc.next();
+		
+		System.out.print("비밀번호 : ");
+		String pw = sc.next();
+		
+		Member member = new Member(id, pw);
+		service.logIn(member);
+		
+		
+		
+	}
 }
