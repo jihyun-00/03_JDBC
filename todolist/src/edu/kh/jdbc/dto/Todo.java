@@ -11,11 +11,13 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Member {
-	
+public class Todo {
+
+	private int todoNo;
 	private String userId;
-	private String userPw;
-	private String userName;
-	private String signupDate;
+	private String todoTitle;
+	private String todoContent;
+	private String completeYN;
+	private String writeDate;
 
 }
