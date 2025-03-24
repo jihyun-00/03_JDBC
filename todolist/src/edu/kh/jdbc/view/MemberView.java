@@ -36,6 +36,7 @@ public class MemberView {
 
 				System.out.print("원하는 메뉴를 입력하세요 : ");
 				num = sc.nextInt();
+				sc.nextLine();
 
 				switch (num) {
 				case 1: signIn(); break;
@@ -152,6 +153,7 @@ public class MemberView {
 
 		for (Todo t : todoList) {
 			System.out.println(t);
+			return;
 		}
 
 		if (todoList.isEmpty()) {
@@ -175,11 +177,12 @@ public class MemberView {
 		
 		System.out.print("할 일 제목 : ");
 		String title = sc.nextLine();
-		sc.next();
+		
+		
 		
 		System.out.print("할 일 내용 : ");
 		String content = sc.nextLine();
-		sc.next();
+		
 		
 		result = service.addTodoList(title, content, loginList);
 		

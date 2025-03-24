@@ -91,7 +91,7 @@ public class MemberDAO {
 			rs = pstmt.executeQuery();
 			
 			
-			while(rs.next()) { // 반대의 경우 안해도됨
+			while(rs.next()) {
 				todoList.add(new Todo(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6)));
 				
 			}
