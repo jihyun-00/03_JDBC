@@ -81,8 +81,15 @@ public class MemberDAO {
 		
 		try {
 			String sql = """
-					SELECT * FROM V_TODO
-					WHERE MEMBER_ID = ?
+					SELECT 
+						    ROW_NUMBER() OVER (ORDER BY WRITE_DATE) AS row_num,
+						    MEMBER_ID, 
+						    TODO_TITLE, 
+						    TODO_CONTENT, 
+						    COMPLETE_YN, 
+						    WRITE_DATE
+					FROM TB_TODO
+					WHERE MEMBER_ID=?
 					""";
 			
 			pstmt = conn.prepareStatement(sql);

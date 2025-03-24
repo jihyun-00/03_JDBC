@@ -16,6 +16,7 @@ public class MemberView {
 	private Scanner sc = new Scanner(System.in);
 	private MemberService service = new MemberService();
 	List<Member> loginList = new ArrayList<>();
+	List<Todo> todoList = new ArrayList<Todo>();
 
 	public void mainMenu() {
 
@@ -33,6 +34,7 @@ public class MemberView {
 				System.out.println("6. 완료여부변경(Y<->N)");
 				System.out.println("7. 투두리스트 삭제");
 				System.out.println("8. 로그아웃");
+				System.out.println("0. 프로그램 종료");
 
 				System.out.print("원하는 메뉴를 입력하세요 : ");
 				num = sc.nextInt();
@@ -72,6 +74,12 @@ public class MemberView {
 		
 		int result = 0;
 		
+		if(!loginList.isEmpty()) {
+			System.out.println("로그아웃 후 진행해주세요.");
+			return;
+		}
+		
+		
 		System.out.println("\n===== 회원가입 =====");
 		System.out.print("가입할 아이디 : ");
 		String id = sc.next();
@@ -109,6 +117,11 @@ public class MemberView {
 		
 		List<Member> memberList = new ArrayList<>();
 		
+		if(!loginList.isEmpty()) {
+			System.out.println("이미 로그인이 되었습니다.");
+			return;
+		}
+		
 		System.out.println("\n===== 로그인 =====");
 		System.out.print("아이디 : ");
 		String id = sc.next();
@@ -141,7 +154,7 @@ public class MemberView {
 	private void viewTodoList() throws Exception {
 		
 		
-		List<Todo> todoList = new ArrayList<Todo>();
+		
 		
 		if(loginList.isEmpty()) {
 			System.out.println("로그인 먼저 진행해주세요.");
@@ -153,7 +166,6 @@ public class MemberView {
 
 		for (Todo t : todoList) {
 			System.out.println(t);
-			return;
 		}
 
 		if (todoList.isEmpty()) {
@@ -182,6 +194,18 @@ public class MemberView {
 		
 		System.out.print("할 일 내용 : ");
 		String content = sc.nextLine();
+		
+		for(Todo t : todoList) {
+			if(t.getTodoTitle().equals(title) && t.getTodoContent().equals(content)) {
+				System.out.println("이미 추가된 제목과 내용입니다.");
+				System.out.print("추가하시겠습니까? (Y/N) : ");
+				char add = sc.next().toUpperCase().charAt(0);
+				
+				if(add=='N') {
+					return;
+				}
+			}
+		}
 		
 		
 		result = service.addTodoList(title, content, loginList);
@@ -214,14 +238,13 @@ public class MemberView {
 		
 		System.out.print("수정할 리스트의 번호를 선택하세요 : ");
 		int num = sc.nextInt();
+		sc.nextLine();
 		
 		System.out.print("수정할 제목을 입력하세요 : ");
 		String title = sc.nextLine();
-		sc.next();
 		
 		System.out.print("수정할 내용을 입력하세요 : ");
 		String content = sc.nextLine();
-		sc.next();
 		
 		result = service.updateTodoList(num, title, content, loginList);
 		
@@ -255,8 +278,13 @@ public class MemberView {
 		System.out.print("완료여부를 변경할 리스트의 번호를 선택하세요 : ");
 		int num = sc.nextInt();
 		
-		System.out.print("완료하였습니까? (Y/N) ");
-		char yn = sc.next().toUpperCase().charAt(0);
+		char yn = 'Y';
+		
+		if(todoList.get(num-1).getCompleteYN().equals("Y")) {
+			yn='N';
+		} else if(todoList.get(num-1).getCompleteYN().equals("N")){
+			yn='Y';
+		}
 				
 		result = service.changeYN(num, yn, loginList);
 		
@@ -308,5 +336,6 @@ public class MemberView {
 		
 		System.out.println(loginList.get(0).getUserName() + "님 로그아웃 되었습니다.");
 		loginList.clear();
+		todoList.clear();
 	}
 }
