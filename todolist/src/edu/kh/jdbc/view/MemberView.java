@@ -84,8 +84,18 @@ public class MemberView {
 		System.out.print("가입할 아이디 : ");
 		String id = sc.next();
 		
+		if(id.length()>10) {
+			System.out.println("아이디를 10자 이내로 가입해주세요.");
+			return;
+		}
+		
 		System.out.print("가입할 비밀번호 : ");
 		String pw = sc.next();
+		
+		if(pw.length()>10) {
+			System.out.println("비밀번호를 10자 이내로 가입해주세요.");
+			return;
+		}
 		
 		System.out.print("비밀번호 확인 : ");
 		String pw2 = sc.next();
